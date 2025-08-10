@@ -1,0 +1,48 @@
+services:
+    backend:
+        image: idex/laravelback83
+        build:
+            dockerfile: php.dockerfile
+            context: .
+        ports:
+#            - "8100:80"
+            - "80:80"
+        volumes:
+            - .:/app
+#           - .:/app:delegated
+        depends_on:
+            - db
+            - redis
+        networks:
+            - backend
+#        restart: unless-stopped
+
+    db:
+        image: mysql:8
+        environment:
+            MYSQL_ROOT_PASSWORD: verysecret
+            MYSQL_DATABASE: larabase
+            MYSQL_USER: larauser
+            MYSQL_PASSWORD: secret
+        ports:
+            - "53307:3306"
+        volumes:
+            - ./.db/base:/var/lib/mysql:delegated
+            - ./.db/conf:/etc/mysql/conf.d
+            - ./.db/files:/var/lib/mysql-files:delegated
+            - ./.db/log:/var/log/mysql:delegated
+        networks:
+            - backend
+    #        restart: unless-stopped
+
+    redis:
+        image: redis:7
+        networks:
+            - backend
+#        restart: unless-stopped
+
+networks:
+    backend:
+        driver: bridge
+#        driver_opts:
+#            com.docker.network.driver.mtu: 1450
