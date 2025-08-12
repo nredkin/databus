@@ -50,15 +50,16 @@ class MessageController extends ApiController
     {
         return $this->withErrorControl(function () use ($request, $parseHeaders) {
             $headers = Validator::validate($parseHeaders->getHeaders(), [
-                'sender' => ['sometimes', 'string', 'max:32', 'exists:users,code'],
+//                'sender' => ['sometimes', 'string', 'max:32', 'exists:users,code'],
                 'recipient' => ['sometimes', 'string', 'max:32', 'exists:users,code'],
                 'messageCode' => ['sometimes', Rule::enum(MessageCode::class)],
                 'messageId' =>  ['sometimes', 'string', 'max:64', 'unique:messages,message_id'],
             ]);
-            $sender_id = !empty($headers['sender']) ? User::getIdByCode($headers['sender']) : null;
+//            $sender_id = !empty($headers['sender']) ? User::getIdByCode($headers['sender']) : null;
             $recipient_id = !empty($headers['recipient']) ? User::getIdByCode($headers['recipient']) : null;
             $message = MessageService::create([
-                'sender_id' => $sender_id ?? Auth::id(),
+//                'sender_id' => $sender_id ?? Auth::id(),
+                'sender_id' => Auth::id(),
                 'recipient_id' => $recipient_id,
                 'message_id' => $headers['messageId'],
                 'message_code' => $headers['messageCode'],
