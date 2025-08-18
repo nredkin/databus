@@ -19,11 +19,23 @@ class MessageController extends ApiController
 
     public function index(Request $request)
     {
-        $query = $this->user()->incomeMessages()
-            ->join('users', 'users.id', '=', 'messages.sender_id')
-            ->where('messages.status', MessageStatus::Awaiting->value)
+        $limit = max(0, min(100, $request->header('X-Limit', self::FETCH_MESSAGES_LIMIT)));
+        $codes = array_filter(explode(',', base64_decode($request->header('X-Codes', ''))));
+
+        $user = $this->user();
+        if ($user->is_master && !empty($codes)) {
+            $usersIdsQuery = User::query()->select('id')->whereIn('code', $codes);
+            $query = Message::query()->whereIn('recipient_id', $usersIdsQuery);
+        } else {
+            $query = $this->user()->incomeMessages();
+        }
+
+        $query = $query
+            ->join('users as susers', 'susers.id', '=', 'messages.sender_id')
+            ->join('users as rusers', 'rusers.id', '=', 'messages.recipient_id')
+            // ->where('messages.status', MessageStatus::Awaiting->value)
             ->orderBy('messages.id')
-            ->limit(self::FETCH_MESSAGES_LIMIT)
+            ->limit($limit)
             ->toBase();
 
         $ids = (clone $query)->pluck('messages.id')->toArray();
@@ -31,7 +43,8 @@ class MessageController extends ApiController
 
         $items = $query
             ->select([
-                'users.code as Sender',
+                'susers.code as Sender',
+                'rusers.code as Recipient',
                 'message_code as MessageCode',
                 'message_id as MessageId',
                 'payload as Data',

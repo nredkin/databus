@@ -13,7 +13,7 @@ use Throwable;
 
 class CreateUser extends Command
 {
-    protected $signature = 'user:create';
+    protected $signature = 'user:create {--set-master}';
 
     /**
      * The console command description.
@@ -30,6 +30,7 @@ class CreateUser extends Command
         $validated = [];
 
         do {
+            $setMaster = $this->option('set-master');
             $name = trim($this->ask('What is the name?'));
             $code = trim($this->ask('What is the code?'));
             $password = $this->secret('What is the password?');
@@ -69,7 +70,7 @@ class CreateUser extends Command
         }
 
         try {
-            $user = UserService::create($validated);
+            $user = UserService::create($validated, isMaster: (bool)$setMaster);
             $this->info(sprintf("User created. ID #%s, email: %s", $user->id, $user->email));
         } catch (Throwable $e) {
             $this->error('Failed to create a user.');
