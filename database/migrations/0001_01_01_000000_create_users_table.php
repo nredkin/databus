@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('code', 32)->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
+            $table->boolean('is_master')->default(false);
             $table->rememberToken();
             $table->timestamps();
         });

@@ -23,7 +23,6 @@ return new class extends Migration
             $table->string('error_message', 255)->nullable();
             $table->unsignedSmallInteger('status')->default(0);
             $table->longText('payload')->nullable();
-            $table->boolean('is_master')->default(0);
         });
     }
 
