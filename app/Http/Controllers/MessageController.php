@@ -33,7 +33,7 @@ class MessageController extends ApiController
         $query = $query
             ->join('users as susers', 'susers.id', '=', 'messages.sender_id')
             ->join('users as rusers', 'rusers.id', '=', 'messages.recipient_id')
-            // ->where('messages.status', MessageStatus::Awaiting->value)
+            ->where('messages.status', MessageStatus::Awaiting->value)
             ->orderBy('messages.id')
             ->limit($limit)
             ->toBase();
