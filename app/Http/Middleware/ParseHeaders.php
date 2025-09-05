@@ -34,7 +34,7 @@ class ParseHeaders
         }
 
         if ($isPost) {
-            if ($sender && ($sender !== $user->code)) {
+            if ($sender && ($sender !== $user->code) && !$user->is_master) {
                 return new JsonResponse(['result' => null, 'errorMessage' => 'Header Sender is wrong to the current user.'], 400);
             }
         } else {
