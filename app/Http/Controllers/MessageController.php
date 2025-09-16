@@ -63,7 +63,7 @@ class MessageController extends ApiController
     {
         return $this->withErrorControl(function () use ($request, $parseHeaders) {
             $headers = Validator::validate($parseHeaders->getHeaders(), [
-                'sender' => ['sometimes', 'string', 'max:32', 'exists:users,code'],
+                'sender' => ['nullable', 'string', 'max:32', 'exists:users,code'],
                 'recipient' => ['sometimes', 'string', 'max:32', 'exists:users,code'],
                 'messageCode' => ['sometimes', Rule::enum(MessageCode::class)],
                 'messageId' =>  ['sometimes', 'string', 'max:64', 'unique:messages,message_id'],
