@@ -19,7 +19,7 @@ class MessageController extends ApiController
 
     public function index(Request $request)
     {
-        $limit = max(0, min(100, $request->header('X-Limit', self::FETCH_MESSAGES_LIMIT)));
+        $limit = max(1, min(500, $request->header('X-Limit', self::FETCH_MESSAGES_LIMIT)));
         $codes = array_filter(explode(',', base64_decode($request->header('X-Codes', ''))));
 
         $user = $this->user();
