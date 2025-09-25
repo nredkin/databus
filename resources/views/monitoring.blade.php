@@ -1,7 +1,9 @@
 <?php
 use Illuminate\Support\Str;
 
-$query = \App\Models\Message::query()->latest();
+$messages = \App\Models\Message::query()
+    ->latest()
+    ->paginate(50);
 ?>
 <html>
 <body>
@@ -68,7 +70,7 @@ $query = \App\Models\Message::query()->latest();
         </tr>
         </thead>
         <tbody>
-        @foreach($query->get() as $item)
+        @foreach($messages as $item)
         <tr>
             <td>{{ $item->id }}</td>
             <td>{{ $item->sender?->code ?? '?' }}</td>
@@ -83,6 +85,9 @@ $query = \App\Models\Message::query()->latest();
         @endforeach
         </tbody>
     </table>
+    <div>
+        {{ $messages->links() }}
+    </div>
 </div>
 </body>
 </html>
