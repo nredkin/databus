@@ -66,7 +66,7 @@ class MessageController extends ApiController
                 'sender' => ['nullable', 'string', 'max:32', 'exists:users,code'],
                 'recipient' => ['sometimes', 'string', 'max:32', 'exists:users,code'],
                 'messageCode' => ['sometimes', Rule::enum(MessageCode::class)],
-                'messageId' =>  ['sometimes', 'string', 'max:64', 'unique:messages,message_id'],
+                'messageId' => ['sometimes', 'string', 'max:64', 'unique:messages,message_id'],
             ]);
             $sender_id = !empty($headers['sender']) ? User::getIdByCode($headers['sender']) : null;
             $recipient_id = !empty($headers['recipient']) ? User::getIdByCode($headers['recipient']) : null;
@@ -76,7 +76,10 @@ class MessageController extends ApiController
                 'recipient_id' => $recipient_id,
                 'message_id' => $headers['messageId'],
                 'message_code' => $headers['messageCode'],
-                'payload' => $request->getContent(),
+                'payload' => json_encode(
+                    json_decode($request->getContent() ?: '', true, 512, JSON_THROW_ON_ERROR),
+                    JSON_THROW_ON_ERROR | JSON_UNESCAPED_UNICODE
+                ),
             ]);
 
             return $message->id;
