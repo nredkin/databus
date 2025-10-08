@@ -47,11 +47,12 @@ $messages = \App\Models\Message::query()
     table tbody > tr > td:nth-child(2) { width: 10%; text-align: center; }
     table tbody > tr > td:nth-child(3) { width: 10%; text-align: center; }
     table tbody > tr > td:nth-child(4) { width: 5%; text-align: center; }
-    table tbody > tr > td:nth-child(5) { width: 10%; text-align: center; }
+    table tbody > tr > td:nth-child(5) { width: 7%; text-align: center; }
+    table tbody > tr > td:nth-child(5) { width: 7%; text-align: center; }
     table tbody > tr > td:nth-child(6) { width: 10%; text-align: center; }
     table tbody > tr > td:nth-child(7) { width: 10%; text-align: center; }
-    table tbody > tr > td:nth-child(8) { width: 25%; }
-    table tbody > tr > td:nth-child(9) { width: 35%; max-width: 300px; }
+    table tbody > tr > td:nth-child(8) { width: 20%; }
+    table tbody > tr > td:nth-child(9) { width: 30%; max-width: 300px; }
 </style>
 <div class="table_component" role="region" tabindex="0">
     <table>
@@ -62,6 +63,7 @@ $messages = \App\Models\Message::query()
             <th>Sender</th>
             <th>Recipient</th>
             <th>Status</th>
+            <th>Created At</th>
             <th>Processed At</th>
             <th>Message ID</th>
             <th>Message Code</th>
@@ -76,11 +78,12 @@ $messages = \App\Models\Message::query()
             <td>{{ $item->sender?->code ?? '?' }}</td>
             <td>{{ $item->recipient?->code ?? '?' }}</td>
             <td>{{ $item->status }}</td>
+            <td>{{ $item->created_at }}</td>
             <td>{{ $item->processed_at }}</td>
             <td>{{ $item->message_id }}</td>
             <td>{{ $item->message_code->title() }}</td>
             <td>{{ $item->error_message }}</td>
-            <td>{{ Str::limit($item->payload, 400) }}</td>
+            <td>{{ Str::limit($item->payload, 300) }}</td>
         </tr>
         @endforeach
         </tbody>
