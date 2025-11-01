@@ -65,24 +65,43 @@ class MessageController extends ApiController
             $headers = Validator::validate($parseHeaders->getHeaders(), [
                 'sender' => ['nullable', 'string', 'max:32', 'exists:users,code'],
                 'recipient' => ['sometimes', 'string', 'max:32', 'exists:users,code'],
+                'recipients' => ['sometimes', 'string', 'max:1000'],
                 'messageCode' => ['sometimes', Rule::enum(MessageCode::class)],
                 'messageId' => ['sometimes', 'string', 'max:64', 'unique:messages,message_id'],
             ]);
-            $sender_id = !empty($headers['sender']) ? User::getIdByCode($headers['sender']) : null;
-            $recipient_id = !empty($headers['recipient']) ? User::getIdByCode($headers['recipient']) : null;
-            $message = MessageService::create([
-                'sender_id' => $sender_id ?? Auth::id(),
-//                'sender_id' => Auth::id(),
-                'recipient_id' => $recipient_id,
-                'message_id' => $headers['messageId'],
-                'message_code' => $headers['messageCode'],
-                'payload' => json_encode(
-                    json_decode($request->getContent() ?: '', true, 512, JSON_THROW_ON_ERROR),
-                    JSON_THROW_ON_ERROR | JSON_UNESCAPED_UNICODE
-                ),
-            ]);
 
-            return $message->id;
+            $sender_id = !empty($headers['sender']) ? User::getIdByCode($headers['sender']) : null;
+
+            if (array_key_exists('recipients', $headers)) {
+                $recipientIds = array_filter(array_map('trim',explode(',', $headers['recipients'])));
+                $userIds = User::query()
+                    ->whereIn('code', $recipientIds)
+                    ->pluck('id')
+                    ->toArray();
+
+                return empty($userIds) ? null : MessageService::createMany([
+                    'sender_id' => $sender_id ?? Auth::id(),
+                    'message_id' => $headers['messageId'],
+                    'message_code' => $headers['messageCode'],
+                    'payload' => json_encode(
+                        json_decode($request->getContent() ?: '', true, 512, JSON_THROW_ON_ERROR),
+                        JSON_THROW_ON_ERROR | JSON_UNESCAPED_UNICODE
+                    ),
+                ], $userIds);
+            } else {
+                $recipient_id = !empty($headers['recipient']) ? User::getIdByCode($headers['recipient']) : null;
+
+                return !$recipient_id ? null : MessageService::create([
+                    'sender_id' => $sender_id ?? Auth::id(),
+                    'recipient_id' => $recipient_id,
+                    'message_id' => $headers['messageId'],
+                    'message_code' => $headers['messageCode'],
+                    'payload' => json_encode(
+                        json_decode($request->getContent() ?: '', true, 512, JSON_THROW_ON_ERROR),
+                        JSON_THROW_ON_ERROR | JSON_UNESCAPED_UNICODE
+                    ),
+                ]);
+            }
         });
     }
 }

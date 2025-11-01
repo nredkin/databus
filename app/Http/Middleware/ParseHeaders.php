@@ -22,6 +22,7 @@ class ParseHeaders
     {
         $sender = $request->headers->get('Sender');
         $recipient = $request->headers->get('Recipient');
+        $recipients = $request->headers->get('Recipients');
         $messageCode = $request->headers->get('MessageCode');
         $messageId = $request->headers->get('MessageID');
 
@@ -47,7 +48,7 @@ class ParseHeaders
             return new JsonResponse(['result' => null, 'errorMessage' => 'Header MessageCode is wrong.'], 400);
         }
 
-        static::$parsedHeaders = compact('sender', 'recipient', 'messageCode', 'messageId');
+        static::$parsedHeaders = compact('sender', 'recipient','recipients', 'messageCode', 'messageId');
 
         return $next($request);
     }
