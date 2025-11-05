@@ -64,23 +64,24 @@ class MessageController extends ApiController
         return $this->withErrorControl(function () use ($request, $parseHeaders) {
             $headers = Validator::validate($parseHeaders->getHeaders(), [
                 'sender' => ['nullable', 'string', 'max:32', 'exists:users,code'],
-                'recipient' => ['sometimes', 'string', 'max:32', 'exists:users,code'],
-                'recipients' => ['sometimes', 'string', 'max:1000'],
-                'messageCode' => ['sometimes', Rule::enum(MessageCode::class)],
-                'messageId' => ['sometimes', 'string', 'max:64', 'unique:messages,message_id'],
+                'recipient' => ['nullable', 'string', 'max:32', 'exists:users,code'],
+                'recipients' => ['nullable', 'string', 'max:1000'],
+                'messageCode' => ['required', Rule::enum(MessageCode::class)],
+                'messageId' => ['required', 'string', 'max:64', 'unique:messages,message_id'],
             ]);
 
-            $sender_id = !empty($headers['sender']) ? User::getIdByCode($headers['sender']) : null;
+            $senderId = empty($headers['sender']) ? null : User::getIdByCode($headers['sender']);
 
-            if (array_key_exists('recipients', $headers)) {
+            if (!empty($headers['recipients'])) {
                 $recipientIds = array_filter(array_map('trim',explode(',', $headers['recipients'])));
-                $userIds = User::query()
+
+                $userIds = empty($recipientIds) ? [] : User::query()
                     ->whereIn('code', $recipientIds)
                     ->pluck('id')
                     ->toArray();
 
                 return empty($userIds) ? null : MessageService::createMany([
-                    'sender_id' => $sender_id ?? Auth::id(),
+                    'sender_id' => $senderId ?? Auth::id(),
                     'message_id' => $headers['messageId'],
                     'message_code' => $headers['messageCode'],
                     'payload' => json_encode(
@@ -89,11 +90,11 @@ class MessageController extends ApiController
                     ),
                 ], $userIds);
             } else {
-                $recipient_id = !empty($headers['recipient']) ? User::getIdByCode($headers['recipient']) : null;
+                $recipientId = empty($headers['recipient']) ? null : User::getIdByCode($headers['recipient']);
 
-                return !$recipient_id ? null : MessageService::create([
-                    'sender_id' => $sender_id ?? Auth::id(),
-                    'recipient_id' => $recipient_id,
+                return empty($recipientId) ? null : MessageService::create([
+                    'sender_id' => $senderId ?? Auth::id(),
+                    'recipient_id' => $recipientId,
                     'message_id' => $headers['messageId'],
                     'message_code' => $headers['messageCode'],
                     'payload' => json_encode(
