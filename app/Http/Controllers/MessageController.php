@@ -67,7 +67,7 @@ class MessageController extends ApiController
                 'recipient' => ['nullable', 'string', 'max:32', 'exists:users,code'],
                 'recipients' => ['nullable', 'string', 'max:1000'],
                 'messageCode' => ['required', Rule::enum(MessageCode::class)],
-                'messageId' => ['required', 'string', 'max:64', 'unique:messages,message_id'],
+                'messageId' => ['nullable', 'string', 'max:64', 'unique:messages,message_id'],
             ]);
 
             $senderId = empty($headers['sender']) ? null : User::getIdByCode($headers['sender']);
@@ -82,7 +82,6 @@ class MessageController extends ApiController
 
                 return empty($userIds) ? null : MessageService::createMany([
                     'sender_id' => $senderId ?? Auth::id(),
-                    'message_id' => $headers['messageId'],
                     'message_code' => $headers['messageCode'],
                     'payload' => json_encode(
                         json_decode($request->getContent() ?: '', true, 512, JSON_THROW_ON_ERROR),

@@ -49,10 +49,6 @@ class ParseHeaders
             return new JsonResponse(['result' => null, 'errorMessage' => 'Header MessageCode is wrong.'], 400);
         }
 
-        if (empty($messageId)) {
-            $messageId = Uuid::uuid4()->toString();
-        }
-
         static::$parsedHeaders = compact('sender', 'recipient','recipients', 'messageCode', 'messageId');
 
         return $next($request);

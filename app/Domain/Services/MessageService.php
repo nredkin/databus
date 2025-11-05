@@ -3,6 +3,7 @@
 namespace App\Domain\Services;
 
 use App\Models\Message;
+use Ramsey\Uuid\Uuid;
 
 class MessageService
 {
@@ -23,6 +24,7 @@ class MessageService
 
         foreach ($recipientIds as $recipientId) {
             $payload = $defaultPayload;
+            $payload['message_id'] = Uuid::uuid4()->toString();
             $payload['recipient_id'] = $recipientId;
             $model = new Message($payload);
             $model->saveOrFail();
