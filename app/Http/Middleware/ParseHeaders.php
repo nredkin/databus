@@ -7,6 +7,7 @@ use App\Models\User;
 use Closure;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Ramsey\Uuid\Uuid;
 use Symfony\Component\HttpFoundation\Response;
 
 class ParseHeaders
@@ -46,6 +47,10 @@ class ParseHeaders
 
         if ($messageCode && !in_array($messageCode, MessageCode::names(), true)) {
             return new JsonResponse(['result' => null, 'errorMessage' => 'Header MessageCode is wrong.'], 400);
+        }
+
+        if (empty($messageId)) {
+            $messageId = Uuid::uuid4()->toString();
         }
 
         static::$parsedHeaders = compact('sender', 'recipient','recipients', 'messageCode', 'messageId');
