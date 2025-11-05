@@ -67,7 +67,7 @@ class MessageController extends ApiController
                 'recipient' => ['nullable', 'string', 'max:32', 'exists:users,code'],
                 'recipients' => ['nullable', 'string', 'max:1000'],
                 'messageCode' => ['required', Rule::enum(MessageCode::class)],
-                'messageId' => ['nullable', 'string', 'max:64', 'unique:messages,message_id'],
+                'messageId' => ['nullable', 'string', 'max:64', 'unique:messages,message_id', 'required_with:recipient'],
             ]);
 
             $senderId = empty($headers['sender']) ? null : User::getIdByCode($headers['sender']);
