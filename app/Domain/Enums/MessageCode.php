@@ -12,6 +12,8 @@ enum MessageCode
     case PaymentInvoiceINCreateUpdate;
     case PaymentFact;
     case FileCreatePaymentOrder;
+    case BankCreateUpdate;
+    case BankAccountCreateUpdate;
 
     public static function titles(): array
     {
@@ -21,6 +23,8 @@ enum MessageCode
             self::PaymentInvoiceINCreateUpdate->name => 'Создание / обновление счета от поставщика',
             self::PaymentFact->name => 'Факт оплаты счета от поставщика',
             self::FileCreatePaymentOrder->name => 'Передача файла',
+            self::BankCreateUpdate->name => 'Обмен банками',
+            self::BankAccountCreateUpdate->name => 'Обмен банковскими счетами',
         ];
     }
 }
