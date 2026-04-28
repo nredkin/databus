@@ -7,6 +7,7 @@ enum MessageCode
     use EnumTrait;
     use EnumBackedTrait;
 
+    case None;
     case NomenclatureCreateUpdate;
     case CounterpartyCreateUpdate;
     case PaymentInvoiceINCreateUpdate;
@@ -18,7 +19,8 @@ enum MessageCode
     public static function titles(): array
     {
         return [
-            self::NomenclatureCreateUpdate->name   => 'Создание / обновление номенклатуры',
+            self::None->name => 'Не задан',
+            self::NomenclatureCreateUpdate->name => 'Создание / обновление номенклатуры',
             self::CounterpartyCreateUpdate->name => 'Создание / обновление контрагента',
             self::PaymentInvoiceINCreateUpdate->name => 'Создание / обновление счета от поставщика',
             self::PaymentFact->name => 'Факт оплаты счета от поставщика',
