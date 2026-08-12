@@ -10,11 +10,12 @@ enum MessageCode
     case None;
     case NomenclatureCreateUpdate;
     case CounterpartyCreateUpdate;
-    case PaymentInvoiceINCreateUpdate;
-    case PaymentFact;
-    case FileCreatePaymentOrder;
-    case BankCreateUpdate;
-    case BankAccountCreateUpdate;
+    case ArrivalDateCreateUpdate;
+    case PriceCreateUpdate;
+    case PriceTypeCreatUpdate;
+    case ContactsCreateUpdate;
+    case NomenclatureImageCreateUpdate;
+    case BlockingStatusUpdate;
 
     public static function titles(): array
     {
@@ -22,11 +23,12 @@ enum MessageCode
             self::None->name => 'Не задан',
             self::NomenclatureCreateUpdate->name => 'Создание / обновление номенклатуры',
             self::CounterpartyCreateUpdate->name => 'Создание / обновление контрагента',
-            self::PaymentInvoiceINCreateUpdate->name => 'Создание / обновление счета от поставщика',
-            self::PaymentFact->name => 'Факт оплаты счета от поставщика',
-            self::FileCreatePaymentOrder->name => 'Передача файла',
-            self::BankCreateUpdate->name => 'Обмен банками',
-            self::BankAccountCreateUpdate->name => 'Обмен банковскими счетами',
+            self::ArrivalDateCreateUpdate->name => 'Создание / обновление даты прихода',
+            self::PriceCreateUpdate->name => 'Создание / обновление цены',
+            self::PriceTypeCreatUpdate->name => 'Создание / обновление типа цены',
+            self::ContactsCreateUpdate->name => 'Создание / обновление контактов',
+            self::NomenclatureImageCreateUpdate->name => 'Создание / обновление изображения номенклатуры',
+            self::BlockingStatusUpdate->name => 'Обновление статуса блокировки',
         ];
     }
 }
