@@ -81,7 +81,12 @@ $messages = \App\Models\Message::query()
             <td>{{ $item->created_at }}</td>
             <td>{{ $item->processed_at }}</td>
             <td>{{ $item->message_id }}</td>
-            <td>{{ $item->message_code->title() }}</td>
+            <td>
+                @php
+                    $originalCode = json_decode($item->payload, true)['_messageCode'] ?? null;
+                @endphp
+                {{ $originalCode ?? $item->message_code->title() }}
+            </td>
             <td>{{ $item->error_message }}</td>
             <td>{{ Str::limit($item->payload, 300) }}</td>
         </tr>

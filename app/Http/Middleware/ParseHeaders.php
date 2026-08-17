@@ -2,7 +2,6 @@
 
 namespace App\Http\Middleware;
 
-use App\Domain\Enums\MessageCode;
 use App\Models\User;
 use Closure;
 use Illuminate\Http\JsonResponse;
@@ -45,9 +44,7 @@ class ParseHeaders
             }
         }
 
-        if ($messageCode && !in_array($messageCode, MessageCode::names(), true)) {
-            return new JsonResponse(['result' => null, 'errorMessage' => 'Header MessageCode is wrong.'], 400);
-        }
+        // TEMP: accept any MessageCode without enum validation
 
         static::$parsedHeaders = compact('sender', 'recipient','recipients', 'messageCode', 'messageId');
 
